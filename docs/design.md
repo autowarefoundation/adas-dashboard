@@ -16,13 +16,13 @@ The visitor must get one sentence from the screen. The stack drives the car. If 
 
 | Part                                                      | Where                                              | Who                                                          |
 | --------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ |
-| Frontend (this repository)                                | `src/`, static build in `dist/`                    | MultiCoreWare                                                |
+| Frontend (this repository)                                | `src/`, static build in `dist/`                    | MulticoreWare                                                |
 | Message schema, recordings, replay tool (this repository) | `schema/`, `recordings/`, `tools/`                 | Autoware Foundation side (Yutaka Kondo), ready before week 1 |
 | VisionPilot adapter, `stack` role                         | `vision_pilot` repository, C++                     | Autoware Foundation side                                     |
 | CARLA adapter, `vehicle` and `map` roles                  | this repository, `adapters/carla/`, Python         | Autoware Foundation side                                     |
 | Safety Island adapter, `supervisor` role                  | this repository, `adapters/safety_island/`, Python | Autoware Foundation side                                     |
 
-MultiCoreWare works only in this repository and only against the replay tool until the bench integration in week 5. Every frontend feature must run from a recording, with no hardware.
+MulticoreWare works only in this repository and only against the replay tool until the bench integration in week 5. Every frontend feature must run from a recording, with no hardware.
 
 ## 3. Decisions
 
@@ -451,10 +451,10 @@ Work runs from 2026-09-28 to 2026-10-30. Each week ends with something that runs
 | Week     | Dates          | Deliverable                                                                                                                                                                                    | Owner         |
 | -------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | W0       | 09-22 to 09-26 | repository, JSON Schema v1, a generated recording of the kill route from tools/synth.py, replay.py. A bench recording joins it in W5                                                           | AWF side      |
-| W1       | 09-28 to 10-02 | frontend skeleton with Vite, TypeScript and three.js. Connects to the replay. Chase camera. Road plane, map lanes and a box ego move. `hello.schema` is compared                               | MultiCoreWare |
-| W2       | 10-05 to 10-09 | meshes. `.glb` conversion, class to mesh, interpolation by `id`, fade in and out, dark matte material and shadow, CC BY-SA credit                                                              | MultiCoreWare |
-| W3       | 10-12 to 10-16 | perception layers and status panel. Cyan lanes, green trajectory, lead distance label, speed and limit, gap, steering and pedal, latency line. Alert state                                     | MultiCoreWare |
-| W4       | 10-19 to 10-23 | remaining states. Connecting, Stack lost, Takeover, Stopped. Amber frame, ghosting, camera PiP `<iframe>` and `c`, theme `t`, URL configuration. The whole recording plays through every state | MultiCoreWare |
+| W1       | 09-28 to 10-02 | frontend skeleton with Vite, TypeScript and three.js. Connects to the replay. Chase camera. Road plane, map lanes and a box ego move. `hello.schema` is compared                               | MulticoreWare |
+| W2       | 10-05 to 10-09 | meshes. `.glb` conversion, class to mesh, interpolation by `id`, fade in and out, dark matte material and shadow, CC BY-SA credit                                                              | MulticoreWare |
+| W3       | 10-12 to 10-16 | perception layers and status panel. Cyan lanes, green trajectory, lead distance label, speed and limit, gap, steering and pedal, latency line. Alert state                                     | MulticoreWare |
+| W4       | 10-19 to 10-23 | remaining states. Connecting, Stack lost, Takeover, Stopped. Amber frame, ghosting, camera PiP `<iframe>` and `c`, theme `t`, URL configuration. The whole recording plays through every state | MulticoreWare |
 | W2 to W4 | in parallel    | VisionPilot adapter in `vision_pilot`. CARLA and Safety Island adapters here                                                                                                                   | AWF side      |
 | W5       | 10-26 to 10-30 | bench integration. Live VisionPilot on the board and live adapters on the CARLA host. Kill route end to end. 60 fps next to CARLA. Camera and color values tuned on the booth monitor          | both          |
 
@@ -481,7 +481,7 @@ If all of these hold, the work is complete:
 
 ## 15. Appendix: the CES 2027 adapters
 
-For reference, not for MultiCoreWare to build.
+For reference, not for MulticoreWare to build.
 
 VisionPilot (`stack`): a WebSocket server in the VisionPilot process, next to the existing WebRTC stream in `modules/visualization/`, reusing Boost.Beast and nlohmann/json that are already linked. It sends `objects`, `trajectory`, `alerts` and `status`. VisionPilot perceives no lane lines, only its planned path, so it sends no `lanes`. It does not know who controls the car, so it sends no `control`. AutoSpeed boxes go to the ground through the homography with the Occupancy view's rule. `class` is `car` or `truck` from the same width heuristic, and a nearest-neighbor tracker gives each box a stable `id`. The trajectory is the path polynomial sampled every meter to 150 m, with an empty `pts` for a frame whose fit failed. `alerts` come from `Plan::warnings`. `FCW` and `AEB` are `critical` with target `lead`. VisionPilot sets `FCW` for planned braking from -3 to -5 m/s², so the page drops it and shows its own warning (section 6.3). `LLDW` and `RLDW` are `info` with target `trajectory`, because lateral oscillation on the bench would otherwise keep the page in Alert. `status.stages` come from the per-frame latency fields. VisionPilot has no flag yet that streams the camera without its HUD. A vehicle without CARLA needs one for the PiP.
 

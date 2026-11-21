@@ -12,13 +12,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/youtalk/adas-dashboard.git"
+    "url": "git+https://github.com/autowarefoundation/adas-dashboard.git"
   },
   "type": "module",
   "bugs": {
-    "url": "https://github.com/youtalk/adas-dashboard/issues"
+    "url": "https://github.com/autowarefoundation/adas-dashboard/issues"
   },
-  "homepage": "https://github.com/youtalk/adas-dashboard#readme",
+  "homepage": "https://github.com/autowarefoundation/adas-dashboard#readme",
   "private": true,
   "devDependencies": {
     "@types/three": "^0.186.0",

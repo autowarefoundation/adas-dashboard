@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/youtalk/adas-dashboard/schema/v1/objects.json",
+  "$id": "https://github.com/autowarefoundation/adas-dashboard/schema/v1/objects.json",
   "title": "objects",
   "type": "object",
   "required": ["source", "type", "t_ms", "frame", "objects"],
