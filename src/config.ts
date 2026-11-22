@@ -33,6 +33,10 @@ export function loadConfig(query: URLSearchParams, fileConfig: Config): Config {
       // Drop a value the type does not allow, so ?units=furlongs cannot lie to Config.
       if (SCALAR_VALUES[k] && !SCALAR_VALUES[k].includes(v)) continue;
       (c as unknown as Record<string, string>)[k] = v;
+    } else if (k === "fcw_ttc_s") {
+      const n = Number(v);
+      if (v.trim() === "" || !Number.isFinite(n)) continue;
+      c.fcw_ttc_s = n;
     } else if (preset) {
       const n = Number(v);
       if (v.trim() === "" || !Number.isFinite(n)) continue;
