@@ -40,16 +40,18 @@ describe("loadConfig", () => {
   });
 
   it("overrides the FCW threshold from the query", () => {
-    const c = loadConfig(new URLSearchParams("fcw_ttc_s=2.5"), file);
-    expect(c.fcw_ttc_s).toBe(2.5);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=2.5"), file).fcw_ttc_s).toBe(2.5);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=4"), file).fcw_ttc_s).toBe(4);
   });
 
-  it("drops an FCW threshold that is empty, non-numeric, infinite, zero, or negative", () => {
+  it("drops an FCW threshold that is empty, non-numeric, infinite, zero, negative, or above the bar", () => {
     expect(loadConfig(new URLSearchParams("fcw_ttc_s="), file)).toEqual(file);
     expect(loadConfig(new URLSearchParams("fcw_ttc_s=not-a-number"), file)).toEqual(file);
     expect(loadConfig(new URLSearchParams("fcw_ttc_s=Infinity"), file)).toEqual(file);
     expect(loadConfig(new URLSearchParams("fcw_ttc_s=0"), file)).toEqual(file);
     expect(loadConfig(new URLSearchParams("fcw_ttc_s=-1"), file)).toEqual(file);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=4.1"), file)).toEqual(file);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=1e3"), file)).toEqual(file);
   });
 
   it("overrides a camera preset value", () => {
@@ -58,6 +60,9 @@ describe("loadConfig", () => {
     expect(c.camera.chase).toEqual({ pitch_deg: 30, distance_m: 18, lookahead_m: 12 });
     expect(c.camera.high.distance_m).toBe(80);
     expect(file.camera.chase.pitch_deg).toBe(25); // the file configuration is untouched
+    expect(
+      loadConfig(new URLSearchParams("camera.chase.pitch_deg=-5"), file).camera.chase.pitch_deg,
+    ).toBe(-5);
   });
 
   it("drops a camera preset value that is not a number", () => {
