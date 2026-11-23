@@ -6,6 +6,7 @@ const file: Config = {
   camera_url: "http://board:8080/",
   units: "mph",
   theme: "dark",
+  fcw_ttc_s: 3,
   camera: {
     chase: { pitch_deg: 25, distance_m: 18, lookahead_m: 12 },
     high: { pitch_deg: 50, distance_m: 60, lookahead_m: 30 },
@@ -36,6 +37,19 @@ describe("loadConfig", () => {
     const c = loadConfig(q, file);
     expect(c.units).toBe("mph");
     expect(c.theme).toBe("light");
+  });
+
+  it("overrides the FCW threshold from the query", () => {
+    const c = loadConfig(new URLSearchParams("fcw_ttc_s=2.5"), file);
+    expect(c.fcw_ttc_s).toBe(2.5);
+  });
+
+  it("drops an FCW threshold that is empty, non-numeric, infinite, zero, or negative", () => {
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s="), file)).toEqual(file);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=not-a-number"), file)).toEqual(file);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=Infinity"), file)).toEqual(file);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=0"), file)).toEqual(file);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=-1"), file)).toEqual(file);
   });
 
   it("overrides a camera preset value", () => {
