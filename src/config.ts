@@ -35,7 +35,7 @@ export function loadConfig(query: URLSearchParams, fileConfig: Config): Config {
       (c as unknown as Record<string, string>)[k] = v;
     } else if (k === "fcw_ttc_s") {
       const n = Number(v);
-      if (v.trim() === "" || !Number.isFinite(n)) continue;
+      if (v.trim() === "" || !Number.isFinite(n) || n <= 0) continue;
       c.fcw_ttc_s = n;
     } else if (preset) {
       const n = Number(v);

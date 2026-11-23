@@ -44,10 +44,12 @@ describe("loadConfig", () => {
     expect(c.fcw_ttc_s).toBe(2.5);
   });
 
-  it("drops an FCW threshold override that is not a finite number", () => {
+  it("drops an FCW threshold that is empty, non-numeric, infinite, zero, or negative", () => {
     expect(loadConfig(new URLSearchParams("fcw_ttc_s="), file)).toEqual(file);
     expect(loadConfig(new URLSearchParams("fcw_ttc_s=not-a-number"), file)).toEqual(file);
     expect(loadConfig(new URLSearchParams("fcw_ttc_s=Infinity"), file)).toEqual(file);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=0"), file)).toEqual(file);
+    expect(loadConfig(new URLSearchParams("fcw_ttc_s=-1"), file)).toEqual(file);
   });
 
   it("overrides a camera preset value", () => {
