@@ -1,3 +1,5 @@
+import { TTC_BAR_MAX_S } from "./fcw";
+
 export type CameraPreset = { pitch_deg: number; distance_m: number; lookahead_m: number };
 
 export type Config = {
@@ -21,6 +23,14 @@ const SCALAR_VALUES: Record<string, readonly string[]> = {
 // can be tuned on the booth monitor without editing config.json.
 const PRESET_KEY = /^camera\.(chase|high)\.(pitch_deg|distance_m|lookahead_m)$/;
 
+// A finite query number, or undefined when the text is blank or not finite.
+// Both the FCW threshold and the camera presets use this check.
+function finiteQueryNumber(value: string): number | undefined {
+  const n = Number(value);
+  if (value.trim() === "" || !Number.isFinite(n)) return undefined;
+  return n;
+}
+
 // Query parameters override config.json key by key (design section 7). A ws://
 // or wss:// value names an endpoint; endpoint names are free.
 export function loadConfig(query: URLSearchParams, fileConfig: Config): Config {
@@ -34,12 +44,13 @@ export function loadConfig(query: URLSearchParams, fileConfig: Config): Config {
       if (SCALAR_VALUES[k] && !SCALAR_VALUES[k].includes(v)) continue;
       (c as unknown as Record<string, string>)[k] = v;
     } else if (k === "fcw_ttc_s") {
-      const n = Number(v);
-      if (v.trim() === "" || !Number.isFinite(n) || n <= 0) continue;
+      const n = finiteQueryNumber(v);
+      // Above the TTC bar the amber zone fills the scale and every closing lead warns.
+      if (n === undefined || n <= 0 || n > TTC_BAR_MAX_S) continue;
       c.fcw_ttc_s = n;
     } else if (preset) {
-      const n = Number(v);
-      if (v.trim() === "" || !Number.isFinite(n)) continue;
+      const n = finiteQueryNumber(v);
+      if (n === undefined) continue;
       c.camera[preset[1] as keyof Config["camera"]][preset[2] as keyof CameraPreset] = n;
     }
   }
